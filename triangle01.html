@@ -17,10 +17,10 @@
                 				  0.0, 0.0, -1.002002, -1.0,
                 				  0.0, 0.0, -0.2002002, 0.0 );
 
-    attribute vec2 aVertexPosition;
+    attribute vec3 aVertexPosition;
    
     void main() {
-      gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
     }
   </script> 
   
@@ -97,13 +97,21 @@
     }
           
     function initGeometry() {
-      var vertices = new Float32Array([-0.5, 0.5, 0.5, - 0.5, - 0.5, - 0.5]);
+      var vertices = new Float32Array([ 
+         //|------ 0 ------| |------ 1 ------| |------ 2 ------| 
+         //| x y z | | x y z | | x y z | 
+         0.5, 0.5, 0.5, 0.5,-0.5, 0.5, -0.5,-0.5, 0.5, // triangle 1 
+         0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5,-0.5, 0.5, // triangle 2 
+         0.5, 0.5,-0.5, 0.5,-0.5,-0.5, -0.5,-0.5,-0.5, // triangle 3 
+         ]); 
 
-      cubeVertexPositionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-      cubeVertexPositionBuffer.itemSize = 2;
+      cubeVertexPositionBuffer = gl.createBuffer(); 
+      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer); 
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW); 
+       
+      cubeVertexPositionBuffer.itemSize = 3; 
+
       cubeVertexPositionBuffer.numItems = vertices.length / cubeVertexPositionBuffer.itemSize;
     }
   
